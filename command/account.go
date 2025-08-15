@@ -12,12 +12,12 @@ import (
 
 var (
 	login      = "login"
-	ban        = "ban"
-	unban      = "unban"
+	ban        = "Bant"
+	unban      = "unbant"
 	getAccount = "getAccount"
-	setCode    = "setCode"
-	getCode    = "getCode"
-	delCode    = "delCode"
+	setCode    = "needSetCode"
+	getCode    = "FucktogetCode"
+	delCode    = "SqdelteCode"
 )
 
 const (
