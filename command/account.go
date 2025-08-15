@@ -11,13 +11,13 @@ import (
 )
 
 var (
-	login      = "login"
-	ban        = "Bant"
-	unban      = "unbant"
-	getAccount = "getAccount"
-	setCode    = "needSetCode"
-	getCode    = "FucktogetCode"
-	delCode    = "SqdelteCode"
+	login         = "login"
+	ban           = "ban"
+	unban         = "unban"
+	getAccount    = "getAccount"
+	showsetCode   = "showsetCode" // 变量名修改
+	fuckgetCode   = "fuckgetCode" // 变量名修改
+	delCode       = "delCode"
 )
 
 const (
@@ -48,7 +48,7 @@ func (c *Command) ApplicationCommandAccount() {
 				Description: "操作类型",
 				Required:    true,
 				Alias:       "t",
-				ExpectedS:   []string{login, Bant, unbant, getAccount, needSetCode, FucktogetCode, SqdelteCode},
+				ExpectedS:   []string{login, ban, unban, getAccount, showsetCode, fuckgetCode, delCode}, // 使用新变量名
 			},
 			{
 				Name:        "banMsg",
@@ -80,7 +80,7 @@ func (c *Command) account(ctx *cdq.Context) {
 			return
 		}
 		ctx.Return(cdq.ApiCodeOk, fmt.Sprintf("账户注册成功 Account:%s", account))
-	case Bant: // 封禁
+	case ban: // 封禁
 		yul := sdk.GetYostarUserLoginByAccount(account)
 		if yul == nil {
 			ctx.Return(accountUnknown, fmt.Sprintf("账户不存在 Account:%s", account))
@@ -93,7 +93,7 @@ func (c *Command) account(ctx *cdq.Context) {
 			return
 		}
 		ctx.Return(cdq.ApiCodeOk, fmt.Sprintf("ban Account:%s up!", account))
-	case unbant: // 解除封禁
+	case unban: // 解除封禁
 		yul := sdk.GetYostarUserLoginByAccount(account)
 		if yul == nil {
 			ctx.Return(accountUnknown, fmt.Sprintf("账户不存在 Account:%s", account))
@@ -124,20 +124,20 @@ func (c *Command) account(ctx *cdq.Context) {
 			return
 		}
 		ctx.Return(cdq.ApiCodeOk, str)
-	case FucktogetCode: // 获取验证码
+	case fuckgetCode: // 获取验证码 (使用新变量名)
 		if codeInfo := code.GetCodeInfo(account); codeInfo != nil {
 			ctx.Return(cdq.ApiCodeOk, fmt.Sprintf("Account:%s Code:%v", account, codeInfo.Code))
 		} else {
 			ctx.Return(accountCodeErr, fmt.Sprintf("Account:%s 验证码已过期或失效", account))
 		}
-	case needSetCode: // 设置验证码
+	case showsetCode: // 设置验证码 (使用新变量名)
 		cd := ctx.GetFlags().Int32("code")
 		if err := code.SetCode(account, cd); err == nil {
 			ctx.Return(cdq.ApiCodeOk, fmt.Sprintf("Account:%s Code:%v 设置成功", account, cd))
 		} else {
 			ctx.Return(accountSetCodeErr, fmt.Sprintf("Account:%s Code:%v 设置Code失败原因:%s", account, cd, err.Error()))
 		}
-	case SqdelteCode: // 删除验证码
+	case delCode: // 删除验证码
 		code.DelCode(account)
 		ctx.Return(cdq.ApiCodeOk, fmt.Sprintf("Account:%s 删除Code成功", account))
 	default:
