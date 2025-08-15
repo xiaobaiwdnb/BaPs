@@ -1,6 +1,6 @@
 package pkg
 
-var ClientVersion = "JP1.59"
-var ServerVersion = "北域_0.2"
+var ClientVersion = "～1.59"
+var ServerVersion = "fork_0.0.12"
 
 // var Commit = ""
