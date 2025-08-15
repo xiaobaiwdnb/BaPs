@@ -15,8 +15,8 @@ var (
 	ban           = "ban"
 	unban         = "unban"
 	getAccount    = "getAccount"
-	showsetCode   = "showsetCode" // 变量名修改
-	fuckgetCode   = "fuckgetCode" // 变量名修改
+	showsetCode   = "showsetCode" // 完全替换 setCode
+	fuckgetCode   = "fuckgetCode" // 完全替换 getCode
 	delCode       = "delCode"
 )
 
@@ -48,7 +48,7 @@ func (c *Command) ApplicationCommandAccount() {
 				Description: "操作类型",
 				Required:    true,
 				Alias:       "t",
-				ExpectedS:   []string{login, ban, unban, getAccount, showsetCode, fuckgetCode, delCode}, // 使用新变量名
+				ExpectedS:   []string{login, ban, unban, getAccount, showsetCode, fuckgetCode, delCode}, // 仅使用新名称
 			},
 			{
 				Name:        "banMsg",
@@ -73,14 +73,14 @@ func (c *Command) account(ctx *cdq.Context) {
 	account := ctx.GetFlags().String("account")
 	types := ctx.GetFlags().String("type")
 	switch types {
-	case login: // 注册
+	case login:
 		ya, err := sdk.GetORAddYostarAccount(account)
 		if err != nil || ya.YostarAccount != account {
 			ctx.Return(accountLoginErr, fmt.Sprintf("账户注册失败 Account:%s", account))
 			return
 		}
 		ctx.Return(cdq.ApiCodeOk, fmt.Sprintf("账户注册成功 Account:%s", account))
-	case ban: // 封禁
+	case ban:
 		yul := sdk.GetYostarUserLoginByAccount(account)
 		if yul == nil {
 			ctx.Return(accountUnknown, fmt.Sprintf("账户不存在 Account:%s", account))
@@ -93,7 +93,7 @@ func (c *Command) account(ctx *cdq.Context) {
 			return
 		}
 		ctx.Return(cdq.ApiCodeOk, fmt.Sprintf("ban Account:%s up!", account))
-	case unban: // 解除封禁
+	case unban:
 		yul := sdk.GetYostarUserLoginByAccount(account)
 		if yul == nil {
 			ctx.Return(accountUnknown, fmt.Sprintf("账户不存在 Account:%s", account))
@@ -106,7 +106,7 @@ func (c *Command) account(ctx *cdq.Context) {
 			return
 		}
 		ctx.Return(cdq.ApiCodeOk, fmt.Sprintf("ban Account:%s up!", account))
-	case getAccount: // 获取账户详情
+	case getAccount:
 		yul := sdk.GetYostarUserLoginByAccount(account)
 		if yul == nil {
 			ctx.Return(accountUnknown, fmt.Sprintf("账户不存在 Account:%s", account))
@@ -124,20 +124,20 @@ func (c *Command) account(ctx *cdq.Context) {
 			return
 		}
 		ctx.Return(cdq.ApiCodeOk, str)
-	case fuckgetCode: // 获取验证码 (使用新变量名)
+	case fuckgetCode: // 完全替换为 fuckgetCode
 		if codeInfo := code.GetCodeInfo(account); codeInfo != nil {
 			ctx.Return(cdq.ApiCodeOk, fmt.Sprintf("Account:%s Code:%v", account, codeInfo.Code))
 		} else {
 			ctx.Return(accountCodeErr, fmt.Sprintf("Account:%s 验证码已过期或失效", account))
 		}
-	case showsetCode: // 设置验证码 (使用新变量名)
+	case showsetCode: // 完全替换为 showsetCode
 		cd := ctx.GetFlags().Int32("code")
 		if err := code.SetCode(account, cd); err == nil {
 			ctx.Return(cdq.ApiCodeOk, fmt.Sprintf("Account:%s Code:%v 设置成功", account, cd))
 		} else {
 			ctx.Return(accountSetCodeErr, fmt.Sprintf("Account:%s Code:%v 设置Code失败原因:%s", account, cd, err.Error()))
 		}
-	case delCode: // 删除验证码
+	case delCode:
 		code.DelCode(account)
 		ctx.Return(cdq.ApiCodeOk, fmt.Sprintf("Account:%s 删除Code成功", account))
 	default:
